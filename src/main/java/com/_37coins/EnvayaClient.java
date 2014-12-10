@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOExceptionWithCause;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,6 +32,8 @@ import com._37coins.pojo.EnvayaResponse;
 import com._37coins.pojo.EnvayaRequest.Action;
 import com._37coins.pojo.EnvayaRequest.MessageType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 
 public class EnvayaClient {
     private static final Logger log = LoggerFactory.getLogger(EnvayaClient.class);
@@ -123,6 +127,26 @@ public class EnvayaClient {
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_GETTING_RESOURCE, e);
         }
+        
+        if(log.isDebugEnabled()){
+          try{
+            log.error("no success in response. Status code:"+response.getStatusLine().getStatusCode());
+            log.info("Request URL->:"+request.getURI().toURL().toString());
+            log.info("Request Headers ->:"+request.getAllHeaders().toString());
+            if(request instanceof HttpPost){
+              String reqBody=IOUtils.toString(((HttpPost)request).getEntity().getContent(), "UTF-8");
+              log.info("Request PostData->:"+reqBody);
+            }
+            String respBody=IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+            log.info("Request PostData->:"+respBody);
+            log.info("Response:"+response.getEntity().getContent());
+          }catch(IOException ioe){
+            ioe.printStackTrace();
+            throw new EnvayaClientException(EnvayaClientException.Reason.ERROR_PARSING);
+          }
+        }
+        
+        
         if (isSucceed(response) && request.getMethod() != "DELETE") {
             return parsePayload(response, entityClass);
         } else if (isSucceed(response)) {

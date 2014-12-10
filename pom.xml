@@ -4,7 +4,7 @@
     <artifactId>envaya-client</artifactId>
     <packaging>jar</packaging>
     <groupId>com.37coins</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,6 +32,11 @@
             <artifactId>jackson-databind</artifactId>
             <groupId>com.fasterxml.jackson.core</groupId>
             <version>2.4.0</version>
+        </dependency>
+        <dependency>
+		      <groupId>commons-io</groupId>
+		      <artifactId>commons-io</artifactId>
+		      <version>2.4</version>
         </dependency>
     </dependencies>
     

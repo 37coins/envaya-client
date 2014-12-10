@@ -24,9 +24,13 @@ public class EnvayaClientException extends Exception{
 
     @Override
     public String toString() {
-        return "ProductsClientException{" +
+        return "EnvayaClientException{" +
                 "reason=" + reason +
                 '}';
+    }
+    
+    public String getMessage(){
+      return toString();
     }
 
     public enum Reason {
