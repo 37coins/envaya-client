@@ -122,11 +122,11 @@ public class EnvayaClient {
         HttpResponse response;
 
         try{
-          log.info("Request URL->:"+request.getURI().toURL().toString());
-          log.info("Request Headers ->:"+request.getAllHeaders().toString());
+          log.debug("Request URL->:"+request.getURI().toURL().toString());
+          log.debug("Request Method->:"+request.getMethod().toString());
           if(request instanceof HttpPost){
             String reqBody=IOUtils.toString(((HttpPost)request).getEntity().getContent(), "UTF-8");
-            log.info("Request PostData->:"+reqBody);
+            log.debug("Request PostData->:"+reqBody);
           }
         }catch(IOException ioe){
           log.error("IOException",ioe);
@@ -137,16 +137,15 @@ public class EnvayaClient {
         try {
             response = httpClient.execute(request);
         } catch (IOException e) {
-            log.error("envaya client error", e);
+            log.error("envaya client httpClient.execute error", e);
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_GETTING_RESOURCE, e);
         }
         
         
       
-        
+        log.debug("Response Status code:"+response.getStatusLine().getStatusCode());
         if (isSucceed(response) && request.getMethod() != "DELETE") {
-          log.error("no success in response. Status code:"+response.getStatusLine().getStatusCode());
           return parsePayload(response, entityClass);
         } else if (isSucceed(response)) {
            return null;
