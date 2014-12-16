@@ -111,7 +111,7 @@ public class EnvayaClient {
             return new ObjectMapper().readValue(response.getEntity()
                     .getContent(), entityClass);
         } catch (IOException e) {
-            log.error("envaya client error", e);
+            log.error("envaya client parsePayload error:", e);
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_PARSING, e);
         }
@@ -120,37 +120,35 @@ public class EnvayaClient {
     protected <K> K getPayload(HttpRequestBase request, Class<K> entityClass)
             throws EnvayaClientException {
         HttpResponse response;
+
+        try{
+          log.debug("Request URL->:"+request.getURI().toURL().toString());
+          log.debug("Request Method->:"+request.getMethod().toString());
+          if(request instanceof HttpPost){
+            String reqBody=IOUtils.toString(((HttpPost)request).getEntity().getContent(), "UTF-8");
+            log.debug("Request PostData->:"+reqBody);
+          }
+        }catch(IOException ioe){
+          log.error("IOException",ioe);
+          throw new EnvayaClientException(EnvayaClientException.Reason.ERROR_PARSING);
+        }
+
+        
         try {
             response = httpClient.execute(request);
         } catch (IOException e) {
-            log.error("envaya client error", e);
+            log.error("envaya client httpClient.execute error", e);
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_GETTING_RESOURCE, e);
         }
         
-        if(log.isDebugEnabled()){
-          try{
-            log.error("no success in response. Status code:"+response.getStatusLine().getStatusCode());
-            log.info("Request URL->:"+request.getURI().toURL().toString());
-            log.info("Request Headers ->:"+request.getAllHeaders().toString());
-            if(request instanceof HttpPost){
-              String reqBody=IOUtils.toString(((HttpPost)request).getEntity().getContent(), "UTF-8");
-              log.info("Request PostData->:"+reqBody);
-            }
-            String respBody=IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-            log.info("Request PostData->:"+respBody);
-            log.info("Response:"+response.getEntity().getContent());
-          }catch(IOException ioe){
-            ioe.printStackTrace();
-            throw new EnvayaClientException(EnvayaClientException.Reason.ERROR_PARSING);
-          }
-        }
         
-        
+      
+        log.debug("Response Status code:"+response.getStatusLine().getStatusCode());
         if (isSucceed(response) && request.getMethod() != "DELETE") {
-            return parsePayload(response, entityClass);
+          return parsePayload(response, entityClass);
         } else if (isSucceed(response)) {
-            return null;
+           return null;
         } else {
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.AUTHENTICATION_FAILED);
