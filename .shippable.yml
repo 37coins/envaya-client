@@ -5,7 +5,7 @@ jdk:
 branches:
   only:
     - develop
-
+    - release/v1.1.0
 cache: true
 
 env: 
