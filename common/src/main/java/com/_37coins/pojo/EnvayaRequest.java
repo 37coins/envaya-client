@@ -460,4 +460,18 @@ public class EnvayaRequest {
         return new UrlEncodedFormEntity(toMap());
     }
 
+    @Override
+    public String toString() {
+        return "EnvayaRequest{" +
+                "phoneNumber='" + phoneNumber + '\'' +
+                ", action=" + action +
+                ", from='" + from + '\'' +
+                ", message='" + message + '\'' +
+                ", messageType=" + messageType +
+                ", timestamp=" + timestamp +
+                ", status=" + status +
+                ", error='" + error + '\'' +
+                ", to='" + to + '\'' +
+                '}';
+    }
 }
