@@ -72,7 +72,8 @@ public class EnvayaRequest {
     public enum MessageType {
         SMS("sms"),
         MMS("mms"),
-        CALL("call");
+        CALL("call"),
+        SMS_PARSED("sms-parsed");
 
         private String text;
 
