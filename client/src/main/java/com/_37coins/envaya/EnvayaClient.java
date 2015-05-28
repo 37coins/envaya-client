@@ -9,11 +9,10 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com._37coins.envaya.EnvayaUtil;
 import com._37coins.envaya.pojo.EnvayaRequest;
-import com._37coins.envaya.pojo.EnvayaResponse;
 import com._37coins.envaya.pojo.EnvayaRequest.Action;
 import com._37coins.envaya.pojo.EnvayaRequest.MessageType;
+import com._37coins.envaya.pojo.EnvayaResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
@@ -85,6 +84,7 @@ public class EnvayaClient {
         String reqSig = null;
         try {
             reqSig = EnvayaUtil.calculateSignature(uri, request.toMap(), digestToken);
+            log.debug("Request Sig -> "+reqSig);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_PARSING);
@@ -93,8 +93,9 @@ public class EnvayaClient {
         FormEncodingBuilder formBuilder = new FormEncodingBuilder();
         for (Map<String,String> nvp: request.toMap())
             for (Entry<String,String> es: nvp.entrySet())
-                formBuilder.addEncoded(es.getKey(),es.getValue());
+                formBuilder.add(es.getKey(),es.getValue());
 
+        
         Request req = new Request.Builder()
             .url(uri)
             .addHeader(EnvayaUtil.AUTH_HEADER, reqSig)
