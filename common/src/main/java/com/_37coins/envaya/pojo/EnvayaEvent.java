@@ -17,7 +17,9 @@ public class EnvayaEvent {
         CANCEL("cancel"),
         CANCEL_ALL("cancel_all"),
         LOG("log"),
-        SETTINGS("settings");
+        SETTINGS("settings"),
+        SING_REQUEST("sign_request"),
+        CREATE_REQUEST("create_request");
 
         private String text;
 
