@@ -1,4 +1,4 @@
-package com._37coins;
+package com._37coins.envaya;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,10 +9,11 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com._37coins.pojo.EnvayaRequest;
-import com._37coins.pojo.EnvayaRequest.Action;
-import com._37coins.pojo.EnvayaRequest.MessageType;
-import com._37coins.pojo.EnvayaResponse;
+import com._37coins.envaya.EnvayaUtil;
+import com._37coins.envaya.pojo.EnvayaRequest;
+import com._37coins.envaya.pojo.EnvayaResponse;
+import com._37coins.envaya.pojo.EnvayaRequest.Action;
+import com._37coins.envaya.pojo.EnvayaRequest.MessageType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;

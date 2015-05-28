@@ -1,4 +1,4 @@
-package com._37coins;
+package com._37coins.envaya;
 
 
 public class EnvayaClientException extends Exception{

@@ -1,4 +1,4 @@
-package com._37coins.pojo;
+package com._37coins.envaya.pojo;
 
 import java.util.List;
 
