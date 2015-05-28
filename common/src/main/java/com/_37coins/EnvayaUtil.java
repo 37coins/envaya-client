@@ -9,18 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.NameValuePair;
+import javax.xml.bind.DatatypeConverter;
 
 public class EnvayaUtil {
     public final static String AUTH_HEADER = "X-Request-Signature";
     
-    public static String calculateSignature(String uri, List<NameValuePair> nvps, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String calculateSignature(String uri, List<Map<String,String>> nvps, String pw) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         Map<String,String> paramMap = new HashMap<>(nvps.size());
-        for (NameValuePair nvp: nvps){
-            paramMap.put(nvp.getName(), nvp.getValue());
-        }
+        for (Map<String,String> nvp: nvps)
+            for (Entry<String,String> es: nvp.entrySet())
+                paramMap.put(es.getKey(), es.getValue());
         return calculateSignature(uri, paramMap, pw);
     }
     
@@ -48,6 +46,6 @@ public class EnvayaUtil {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         md.update(value.getBytes("utf-8"));
 
-        return new String(Base64.encodeBase64(md.digest()));     
+        return DatatypeConverter.printBase64Binary(md.digest());     
     }
 }
