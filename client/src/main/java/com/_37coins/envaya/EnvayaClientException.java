@@ -24,7 +24,7 @@ public class EnvayaClientException extends Exception{
 
     @Override
     public String toString() {
-        return "EnvayaClientException{" +
+        return EnvayaClientException.class.getSimpleName() + "{" +
                 "reason=" + reason +
                 '}';
     }
