@@ -1,17 +1,14 @@
-package com._37coins.pojo;
+package com._37coins.envaya.pojo;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -430,35 +427,30 @@ public class EnvayaRequest {
     }
 
     @JsonIgnore
-    public List<NameValuePair> toMap() throws UnsupportedEncodingException{
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        if (null!=getAction()) nvps.add(new BasicNameValuePair(EnvayaRequest.ACTION, getAction().getText()));
-        if (null!=getBattery()) nvps.add(new BasicNameValuePair(EnvayaRequest.BATTERY, getBattery().toString()));
-        if (null!=getNow()) nvps.add(new BasicNameValuePair(EnvayaRequest.NOW, getNow().toString()));
-        if (null!=getPower()) nvps.add(new BasicNameValuePair(EnvayaRequest.POWER, getPower().toString()));
-        if (null!=getSettingsVersion()) nvps.add(new BasicNameValuePair(EnvayaRequest.SETTINGS_VERION, getSettingsVersion().toString()));
-        if (null!=getTimestamp()) nvps.add(new BasicNameValuePair(EnvayaRequest.TIMESTAMP, getTimestamp().toString()));
-        if (null!=getVersion()) nvps.add(new BasicNameValuePair(EnvayaRequest.VERSION, getVersion().toString()));
-        if (null!=getConsumerTag()) nvps.add(new BasicNameValuePair(EnvayaRequest.CONSUMER_TAG, getConsumerTag()));
-        if (null!=getError()) nvps.add(new BasicNameValuePair(EnvayaRequest.ERROR, getError()));
-        if (null!=getFrom()) nvps.add(new BasicNameValuePair(EnvayaRequest.FROM, getFrom()));
-        if (null!=getId()) nvps.add(new BasicNameValuePair(EnvayaRequest.ID, getId()));
-        if (null!=getLog()) nvps.add(new BasicNameValuePair(EnvayaRequest.LOG, getLog()));
-        if (null!=getMessage()) nvps.add(new BasicNameValuePair(EnvayaRequest.MESSAGE, getMessage()));
-        if (null!=getPhoneId()) nvps.add(new BasicNameValuePair(EnvayaRequest.PHONE_ID, getPhoneId()));
-        if (null!=getPhoneToken()) nvps.add(new BasicNameValuePair(EnvayaRequest.PHONE_TOKEN, getPhoneToken()));
-        if (null!=getSendLimit()) nvps.add(new BasicNameValuePair(EnvayaRequest.SEND_LIMIT, getSendLimit().toString()));
-        if (null!=getMessageType()) nvps.add(new BasicNameValuePair(EnvayaRequest.MESSAGE_TYPE, getMessageType().getText()));
-        if (null!=getNetwork()) nvps.add(new BasicNameValuePair(EnvayaRequest.NETWORK, getNetwork()));
-        if (null!=getPhoneNumber()) nvps.add(new BasicNameValuePair(EnvayaRequest.PHONE_NUMBER, getPhoneNumber()));
-        if (null!=getStatus()) nvps.add(new BasicNameValuePair(EnvayaRequest.STATUS, getStatus().getText()));
-        if (null!=getTo()) nvps.add(new BasicNameValuePair(EnvayaRequest.TO, getTo()));
+    public List<Map<String,String>> toMap() {
+        List<Map<String,String>> nvps = new ArrayList<>();
+        if (null!=getAction()) nvps.add(Collections.singletonMap(EnvayaRequest.ACTION, getAction().getText()));
+        if (null!=getBattery()) nvps.add(Collections.singletonMap(EnvayaRequest.BATTERY, getBattery().toString()));
+        if (null!=getNow()) nvps.add(Collections.singletonMap(EnvayaRequest.NOW, getNow().toString()));
+        if (null!=getPower()) nvps.add(Collections.singletonMap(EnvayaRequest.POWER, getPower().toString()));
+        if (null!=getSettingsVersion()) nvps.add(Collections.singletonMap(EnvayaRequest.SETTINGS_VERION, getSettingsVersion().toString()));
+        if (null!=getTimestamp()) nvps.add(Collections.singletonMap(EnvayaRequest.TIMESTAMP, getTimestamp().toString()));
+        if (null!=getVersion()) nvps.add(Collections.singletonMap(EnvayaRequest.VERSION, getVersion().toString()));
+        if (null!=getConsumerTag()) nvps.add(Collections.singletonMap(EnvayaRequest.CONSUMER_TAG, getConsumerTag()));
+        if (null!=getError()) nvps.add(Collections.singletonMap(EnvayaRequest.ERROR, getError()));
+        if (null!=getFrom()) nvps.add(Collections.singletonMap(EnvayaRequest.FROM, getFrom()));
+        if (null!=getId()) nvps.add(Collections.singletonMap(EnvayaRequest.ID, getId()));
+        if (null!=getLog()) nvps.add(Collections.singletonMap(EnvayaRequest.LOG, getLog()));
+        if (null!=getMessage()) nvps.add(Collections.singletonMap(EnvayaRequest.MESSAGE, getMessage()));
+        if (null!=getPhoneId()) nvps.add(Collections.singletonMap(EnvayaRequest.PHONE_ID, getPhoneId()));
+        if (null!=getPhoneToken()) nvps.add(Collections.singletonMap(EnvayaRequest.PHONE_TOKEN, getPhoneToken()));
+        if (null!=getSendLimit()) nvps.add(Collections.singletonMap(EnvayaRequest.SEND_LIMIT, getSendLimit().toString()));
+        if (null!=getMessageType()) nvps.add(Collections.singletonMap(EnvayaRequest.MESSAGE_TYPE, getMessageType().getText()));
+        if (null!=getNetwork()) nvps.add(Collections.singletonMap(EnvayaRequest.NETWORK, getNetwork()));
+        if (null!=getPhoneNumber()) nvps.add(Collections.singletonMap(EnvayaRequest.PHONE_NUMBER, getPhoneNumber()));
+        if (null!=getStatus()) nvps.add(Collections.singletonMap(EnvayaRequest.STATUS, getStatus().getText()));
+        if (null!=getTo()) nvps.add(Collections.singletonMap(EnvayaRequest.TO, getTo()));
         return nvps;
-    }
-    
-    @JsonIgnore    
-    public UrlEncodedFormEntity toBody() throws UnsupportedEncodingException{
-        return new UrlEncodedFormEntity(toMap());
     }
 
     @Override

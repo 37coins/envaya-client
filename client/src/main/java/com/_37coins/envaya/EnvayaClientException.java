@@ -1,4 +1,4 @@
-package com._37coins;
+package com._37coins.envaya;
 
 
 public class EnvayaClientException extends Exception{
@@ -24,7 +24,7 @@ public class EnvayaClientException extends Exception{
 
     @Override
     public String toString() {
-        return "EnvayaClientException{" +
+        return EnvayaClientException.class.getSimpleName() + "{" +
                 "reason=" + reason +
                 '}';
     }

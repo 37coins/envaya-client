@@ -1,69 +1,48 @@
-package com._37coins;
+package com._37coins.envaya;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com._37coins.pojo.EnvayaRequest;
-import com._37coins.pojo.EnvayaRequest.Action;
-import com._37coins.pojo.EnvayaRequest.MessageType;
-import com._37coins.pojo.EnvayaResponse;
+import com._37coins.envaya.pojo.EnvayaRequest;
+import com._37coins.envaya.pojo.EnvayaRequest.Action;
+import com._37coins.envaya.pojo.EnvayaRequest.MessageType;
+import com._37coins.envaya.pojo.EnvayaResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 
 
 public class EnvayaClient {
     private static final Logger log = LoggerFactory.getLogger(EnvayaClient.class);
-    private final static String CONTENT_TYPE = "application/x-www-form-urlencoded; charset=UTF-8";
-    private HttpClient httpClient;
+    private final OkHttpClient httpClient;
     private String uri;
     private String digestToken;
     private String mobile;
 
-    public static HttpClientBuilder getClientBuilder() {
-        return HttpClientBuilder.create().setRedirectStrategy(
-            new DefaultRedirectStrategy() {
-                @Override
-                public boolean isRedirected(HttpRequest request,
-                        HttpResponse response, HttpContext context)
-                        throws ProtocolException {
-                    return response.getStatusLine().getStatusCode() == 308
-                            || super.isRedirected(request, response,
-                                    context);
-                }
-            });
-    }
-
     public EnvayaClient(String uri, String digestToken, String mobile) {
-        this(uri, digestToken, mobile, getClientBuilder().build());
+        this(uri, digestToken, mobile, new OkHttpClient());
     }
 
-    public EnvayaClient(String uri, String digestToken, String mobile,
-            HttpClient httpClient) {
+    public EnvayaClient(String uri, String digestToken, String mobile, OkHttpClient httpClient) {
         this.uri = uri;
         this.mobile = mobile;
         this.digestToken = digestToken;
         this.httpClient = httpClient;
     }
 
-    protected <K> K parsePayload(HttpResponse response, Class<K> entityClass)
+    protected <K> K parsePayload(Response response, Class<K> entityClass)
             throws EnvayaClientException {
         try {
-            return new ObjectMapper().readValue(response.getEntity()
-                    .getContent(), entityClass);
+            return new ObjectMapper().readValue(response.body().byteStream(), entityClass);
         } catch (IOException e) {
             log.error("envaya client parsePayload error:", e);
             throw new EnvayaClientException(
@@ -71,35 +50,22 @@ public class EnvayaClient {
         }
     }
 
-    protected <K> K getPayload(HttpRequestBase request, Class<K> entityClass)
+    protected <K> K getPayload(Request request, Class<K> entityClass)
             throws EnvayaClientException {
-        HttpResponse response;
-
-        try{
-          log.debug("Request URL->:"+request.getURI().toURL().toString());
-          log.debug("Request Method->:"+request.getMethod().toString());
-          if(request instanceof HttpPost){
-            String reqBody=IOUtils.toString(((HttpPost)request).getEntity().getContent(), "UTF-8");
-            log.debug("Request PostData->:"+reqBody);
-          }
-        }catch(IOException ioe){
-          log.error("IOException",ioe);
-          throw new EnvayaClientException(EnvayaClientException.Reason.ERROR_PARSING);
-        }
-
+        Response response;
+        log.debug("Request URL->:"+request.urlString());
+        log.debug("Request Method->:"+request.method());
         
         try {
-            response = httpClient.execute(request);
+            response = httpClient.newCall(request).execute();
         } catch (IOException e) {
             log.error("envaya client httpClient.execute error", e);
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_GETTING_RESOURCE, e);
         }
-        
-        
-      
-        log.debug("Response Status code:"+response.getStatusLine().getStatusCode());
-        if (isSucceed(response) && request.getMethod() != "DELETE") {
+
+        log.debug("Response Status code:"+response.code());
+        if (isSucceed(response) && request.method().equals("DELETE")) {
           return parsePayload(response, entityClass);
         } else if (isSucceed(response)) {
            return null;
@@ -114,17 +80,27 @@ public class EnvayaClient {
         request
             .setPhoneNumber(mobile)
             .setNow(System.currentTimeMillis());
-        HttpPost req = new HttpPost(uri);
-        req.setHeader("Content-type", CONTENT_TYPE);
+        
         String reqSig = null;
         try {
             reqSig = EnvayaUtil.calculateSignature(uri, request.toMap(), digestToken);
-            req.setHeader(EnvayaUtil.AUTH_HEADER, reqSig);
-            req.setEntity(request.toBody());
+            log.debug("Request Sig -> "+reqSig);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             throw new EnvayaClientException(
                     EnvayaClientException.Reason.ERROR_PARSING);
         }
+        
+        FormEncodingBuilder formBuilder = new FormEncodingBuilder();
+        for (Map<String,String> nvp: request.toMap())
+            for (Entry<String,String> es: nvp.entrySet())
+                formBuilder.add(es.getKey(),es.getValue());
+
+        
+        Request req = new Request.Builder()
+            .url(uri)
+            .addHeader(EnvayaUtil.AUTH_HEADER, reqSig)
+            .post(formBuilder.build()).build();
+        
         return getPayload(req, entityClass);        
     }
 
@@ -167,9 +143,9 @@ public class EnvayaClient {
             .setConsumerTag(consumerTag), EnvayaResponse.class);
     }
     
-    public static boolean isSucceed(HttpResponse response) {
-        return response.getStatusLine().getStatusCode() >= 200
-                && response.getStatusLine().getStatusCode() < 300;
+    public static boolean isSucceed(Response response) {
+        return response.code() >= 200
+                && response.code() < 300;
     }
 
     public static String toLowerCase(String str) {
