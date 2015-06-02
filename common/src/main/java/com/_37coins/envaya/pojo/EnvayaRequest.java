@@ -57,6 +57,7 @@ public class EnvayaRequest {
             if (e.getKey().equals(EVENT)) throw new RuntimeException("not implemented");
             if (e.getKey().equals(TO)) er.setTo(e.getValue());
             if (e.getKey().equals(CONSUMER_TAG)) er.setConsumerTag(e.getValue());
+            if (e.getKey().equals(PARSED_COMMAND_DATA_SET)) er.setParsedCommandDataSet(e.getValue());
         }
         return er;
     }
@@ -199,7 +200,8 @@ public class EnvayaRequest {
     public final static String SEND_LIMIT = "send_limit";
     public final static String TO = "to";
     public final static String CONSUMER_TAG = "consumer_tag";
-    
+    public final static String PARSED_COMMAND_DATA_SET = "parsed_commandDataSet";
+
     private Integer version;
     private String phoneNumber;
     private String log;
@@ -222,8 +224,7 @@ public class EnvayaRequest {
     private String error;
     private String to;
     private String consumerTag;
-    
-    
+    private String parsedCommandDataSet;
     
     public Integer getVersion() {
         return version;
@@ -428,6 +429,15 @@ public class EnvayaRequest {
         return this;
     }
 
+    @JsonProperty(EnvayaRequest.PARSED_COMMAND_DATA_SET)
+    public void setParsedCommandDataSet(String parsedCommandDataSet) {
+        this.parsedCommandDataSet = parsedCommandDataSet;
+    }
+
+    public String getParsedCommandDataSet() {
+        return parsedCommandDataSet;
+    }
+
     @JsonIgnore
     public List<Map<String,String>> toMap() {
         List<Map<String,String>> nvps = new ArrayList<>();
@@ -452,6 +462,7 @@ public class EnvayaRequest {
         if (null!=getPhoneNumber()) nvps.add(Collections.singletonMap(EnvayaRequest.PHONE_NUMBER, getPhoneNumber()));
         if (null!=getStatus()) nvps.add(Collections.singletonMap(EnvayaRequest.STATUS, getStatus().getText()));
         if (null!=getTo()) nvps.add(Collections.singletonMap(EnvayaRequest.TO, getTo()));
+        if (null!=getParsedCommandDataSet()) nvps.add(Collections.singletonMap(EnvayaRequest.PARSED_COMMAND_DATA_SET, getParsedCommandDataSet()));
         return nvps;
     }
 
@@ -467,6 +478,7 @@ public class EnvayaRequest {
                 ", status=" + status +
                 ", error='" + error + '\'' +
                 ", to='" + to + '\'' +
+                ", parsed_commandDataSet='" + parsedCommandDataSet + '\'' +
                 '}';
     }
 }
