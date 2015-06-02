@@ -430,8 +430,9 @@ public class EnvayaRequest {
     }
 
     @JsonProperty(EnvayaRequest.PARSED_COMMAND_DATA_SET)
-    public void setParsedCommandDataSet(String parsedCommandDataSet) {
+    public EnvayaRequest setParsedCommandDataSet(String parsedCommandDataSet) {
         this.parsedCommandDataSet = parsedCommandDataSet;
+        return this;
     }
 
     public String getParsedCommandDataSet() {
