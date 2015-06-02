@@ -133,7 +133,19 @@ public class EnvayaClient {
             .setMessage(message)
             .setTimestamp(timestamp), EnvayaResponse.class);
     }
-    
+
+    public EnvayaResponse parsed(String from, String message, String parsed, Long timestamp) throws EnvayaClientException {
+        return getPayload(new EnvayaRequest()
+                .setVersion(200)
+                .setAction(Action.INCOMING)
+                .setFrom(from)
+                .setParsedCommandDataSet(parsed)
+                .setMessageType(MessageType.SMS_PARSED)
+                .setMessage(message)
+                .setTimestamp(timestamp), EnvayaResponse.class);
+    }
+
+
     public EnvayaResponse outgoing() throws EnvayaClientException {
         return getPayload(new EnvayaRequest()
             .setAction(Action.OUTGOING), EnvayaResponse.class);
