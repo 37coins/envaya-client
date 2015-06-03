@@ -154,6 +154,15 @@ public class EnvayaClient {
             .setTimestamp(timestamp), EnvayaResponse.class);
     }
 
+    public EnvayaResponse signResponse(String from, String signResponse, Long timestamp) throws EnvayaClientException {
+        return getPayload(new EnvayaRequest()
+            .setVersion(200)
+            .setAction(Action.SIGN_RESPONSE)
+            .setFrom(from)
+            .setSignResponse(signResponse)
+            .setTimestamp(timestamp), EnvayaResponse.class);
+    }
+
     public EnvayaResponse outgoing() throws EnvayaClientException {
         return getPayload(new EnvayaRequest()
             .setAction(Action.OUTGOING), EnvayaResponse.class);
