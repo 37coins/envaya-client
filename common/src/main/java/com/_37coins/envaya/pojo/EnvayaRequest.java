@@ -58,6 +58,7 @@ public class EnvayaRequest {
             if (e.getKey().equals(TO)) er.setTo(e.getValue());
             if (e.getKey().equals(CONSUMER_TAG)) er.setConsumerTag(e.getValue());
             if (e.getKey().equals(PARSED_COMMAND_DATA_SET)) er.setParsedCommandDataSet(e.getValue());
+            if (e.getKey().equals(NEW_ACCOUNT_RESPONSE)) er.setNewAccountResponse(e.getValue());
         }
         return er;
     }
@@ -66,7 +67,7 @@ public class EnvayaRequest {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-    
+
     public enum MessageType {
         SMS("sms"),
         MMS("mms"),
@@ -201,6 +202,7 @@ public class EnvayaRequest {
     public final static String TO = "to";
     public final static String CONSUMER_TAG = "consumer_tag";
     public final static String PARSED_COMMAND_DATA_SET = "parsed_commandDataSet";
+    public final static String NEW_ACCOUNT_RESPONSE = "new_account_response";
 
     private Integer version;
     private String phoneNumber;
@@ -225,6 +227,7 @@ public class EnvayaRequest {
     private String to;
     private String consumerTag;
     private String parsedCommandDataSet;
+    private String newAccountResponse;
     
     public Integer getVersion() {
         return version;
@@ -439,6 +442,16 @@ public class EnvayaRequest {
         return parsedCommandDataSet;
     }
 
+    @JsonProperty(EnvayaRequest.NEW_ACCOUNT_RESPONSE)
+    public EnvayaRequest setNewAccountResponse(String newAccountResponse) {
+        this.newAccountResponse = newAccountResponse;
+        return this;
+    }
+
+    public String getNewAccountResponse() {
+        return newAccountResponse;
+    }
+
     @JsonIgnore
     public List<Map<String,String>> toMap() {
         List<Map<String,String>> nvps = new ArrayList<>();
@@ -464,6 +477,7 @@ public class EnvayaRequest {
         if (null!=getStatus()) nvps.add(Collections.singletonMap(EnvayaRequest.STATUS, getStatus().getText()));
         if (null!=getTo()) nvps.add(Collections.singletonMap(EnvayaRequest.TO, getTo()));
         if (null!=getParsedCommandDataSet()) nvps.add(Collections.singletonMap(EnvayaRequest.PARSED_COMMAND_DATA_SET, getParsedCommandDataSet()));
+        if (null!=getNewAccountResponse()) nvps.add(Collections.singletonMap(EnvayaRequest.NEW_ACCOUNT_RESPONSE, getNewAccountResponse()));
         return nvps;
     }
 

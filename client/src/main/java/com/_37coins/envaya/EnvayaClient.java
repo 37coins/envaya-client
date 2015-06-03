@@ -145,6 +145,14 @@ public class EnvayaClient {
                 .setTimestamp(timestamp), EnvayaResponse.class);
     }
 
+    public EnvayaResponse createResponse(String from, String newAccountResponse, Long timestamp) throws EnvayaClientException {
+        return getPayload(new EnvayaRequest()
+            .setVersion(200)
+            .setAction(Action.CREATE_RESPONSE)
+            .setFrom(from)
+            .setNewAccountResponse(newAccountResponse)
+            .setTimestamp(timestamp), EnvayaResponse.class);
+    }
 
     public EnvayaResponse outgoing() throws EnvayaClientException {
         return getPayload(new EnvayaRequest()
