@@ -65,7 +65,7 @@ public class EnvayaClient {
         }
 
         log.debug("Response Status code:"+response.code());
-        if (isSucceed(response) && request.method().equals("DELETE")) {
+        if (isSucceed(response) && !request.method().equals("DELETE")) {
           return parsePayload(response, entityClass);
         } else if (isSucceed(response)) {
            return null;
