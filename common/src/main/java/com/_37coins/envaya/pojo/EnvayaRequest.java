@@ -146,7 +146,6 @@ public class EnvayaRequest {
         SEND_STATUS("send_status"),
         DEVICE_STATUS("device_status"),
         TEST("test"),
-        AMQP_STARTED("amqp_started"),
         FORWARD_SEND("forward_sent"),
         SIGN_RESPONSE("sign_response"),
         CREATE_RESPONSE("create_response");

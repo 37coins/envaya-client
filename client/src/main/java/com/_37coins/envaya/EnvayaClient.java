@@ -168,12 +168,6 @@ public class EnvayaClient {
             .setAction(Action.OUTGOING), EnvayaResponse.class);
     }
     
-    public EnvayaResponse amqpStarted(String consumerTag) throws EnvayaClientException {
-        return getPayload(new EnvayaRequest()
-            .setAction(Action.AMQP_STARTED)
-            .setConsumerTag(consumerTag), EnvayaResponse.class);
-    }
-    
     public static boolean isSucceed(Response response) {
         return response.code() >= 200
                 && response.code() < 300;

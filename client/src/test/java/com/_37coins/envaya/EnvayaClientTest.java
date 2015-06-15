@@ -163,17 +163,6 @@ public class EnvayaClientTest extends Assert {
   }
 
   @Test
-  public void testAmqpStarted() throws Exception {
-    mockWebServer.enqueue(emptyResponse());
-    EnvayaResponse envayaResponse = envayaClient.amqpStarted("TAG");
-    assertEquals(0, envayaResponse.getEvents().size());
-
-    EnvayaRequest envayaRequest = readRequest();
-    assertEquals(EnvayaRequest.Action.AMQP_STARTED, envayaRequest.getAction());
-    assertEquals("TAG", envayaRequest.getConsumerTag());
-  }
-
-  @Test
   public void testTest() throws Exception {
     mockWebServer.enqueue(emptyResponse());
     EnvayaResponse envayaResponse = envayaClient.test();
