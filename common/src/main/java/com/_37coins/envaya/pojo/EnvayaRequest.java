@@ -57,6 +57,9 @@ public class EnvayaRequest {
             if (e.getKey().equals(EVENT)) throw new RuntimeException("not implemented");
             if (e.getKey().equals(TO)) er.setTo(e.getValue());
             if (e.getKey().equals(CONSUMER_TAG)) er.setConsumerTag(e.getValue());
+            if (e.getKey().equals(PARSED_COMMAND_DATA_SET)) er.setParsedCommandDataSet(e.getValue());
+            if (e.getKey().equals(NEW_ACCOUNT_RESPONSE)) er.setNewAccountResponse(e.getValue());
+            if (e.getKey().equals(SIGN_RESPONSE)) er.setSignResponse(e.getValue());
         }
         return er;
     }
@@ -65,7 +68,7 @@ public class EnvayaRequest {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-    
+
     public enum MessageType {
         SMS("sms"),
         MMS("mms"),
@@ -199,7 +202,10 @@ public class EnvayaRequest {
     public final static String SEND_LIMIT = "send_limit";
     public final static String TO = "to";
     public final static String CONSUMER_TAG = "consumer_tag";
-    
+    public final static String PARSED_COMMAND_DATA_SET = "parsed_commandDataSet";
+    public final static String NEW_ACCOUNT_RESPONSE = "new_account_response";
+    public final static String SIGN_RESPONSE = "sign_response";
+
     private Integer version;
     private String phoneNumber;
     private String log;
@@ -222,8 +228,9 @@ public class EnvayaRequest {
     private String error;
     private String to;
     private String consumerTag;
-    
-    
+    private String parsedCommandDataSet;
+    private String newAccountResponse;
+    private String signResponse;
     
     public Integer getVersion() {
         return version;
@@ -428,6 +435,36 @@ public class EnvayaRequest {
         return this;
     }
 
+    @JsonProperty(EnvayaRequest.PARSED_COMMAND_DATA_SET)
+    public EnvayaRequest setParsedCommandDataSet(String parsedCommandDataSet) {
+        this.parsedCommandDataSet = parsedCommandDataSet;
+        return this;
+    }
+
+    public String getParsedCommandDataSet() {
+        return parsedCommandDataSet;
+    }
+
+    @JsonProperty(EnvayaRequest.NEW_ACCOUNT_RESPONSE)
+    public EnvayaRequest setNewAccountResponse(String newAccountResponse) {
+        this.newAccountResponse = newAccountResponse;
+        return this;
+    }
+
+    public String getNewAccountResponse() {
+        return newAccountResponse;
+    }
+
+    @JsonProperty(EnvayaRequest.SIGN_RESPONSE)
+    public EnvayaRequest setSignResponse(String signResponse) {
+        this.signResponse = signResponse;
+        return this;
+    }
+
+    public String getSignResponse() {
+        return signResponse;
+    }
+
     @JsonIgnore
     public List<Map<String,String>> toMap() {
         List<Map<String,String>> nvps = new ArrayList<>();
@@ -452,6 +489,9 @@ public class EnvayaRequest {
         if (null!=getPhoneNumber()) nvps.add(Collections.singletonMap(EnvayaRequest.PHONE_NUMBER, getPhoneNumber()));
         if (null!=getStatus()) nvps.add(Collections.singletonMap(EnvayaRequest.STATUS, getStatus().getText()));
         if (null!=getTo()) nvps.add(Collections.singletonMap(EnvayaRequest.TO, getTo()));
+        if (null!=getParsedCommandDataSet()) nvps.add(Collections.singletonMap(EnvayaRequest.PARSED_COMMAND_DATA_SET, getParsedCommandDataSet()));
+        if (null!=getNewAccountResponse()) nvps.add(Collections.singletonMap(EnvayaRequest.NEW_ACCOUNT_RESPONSE, getNewAccountResponse()));
+        if (null!=getSignResponse()) nvps.add(Collections.singletonMap(EnvayaRequest.SIGN_RESPONSE, getSignResponse()));
         return nvps;
     }
 
@@ -467,6 +507,7 @@ public class EnvayaRequest {
                 ", status=" + status +
                 ", error='" + error + '\'' +
                 ", to='" + to + '\'' +
+                ", parsed_commandDataSet='" + parsedCommandDataSet + '\'' +
                 '}';
     }
 }

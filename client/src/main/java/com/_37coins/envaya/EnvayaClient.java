@@ -24,6 +24,7 @@ import com.squareup.okhttp.Response;
 public class EnvayaClient {
     private static final Logger log = LoggerFactory.getLogger(EnvayaClient.class);
     private final OkHttpClient httpClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private String uri;
     private String digestToken;
     private String mobile;
@@ -42,7 +43,7 @@ public class EnvayaClient {
     protected <K> K parsePayload(Response response, Class<K> entityClass)
             throws EnvayaClientException {
         try {
-            return new ObjectMapper().readValue(response.body().byteStream(), entityClass);
+            return objectMapper.readValue(response.body().byteStream(), entityClass);
         } catch (IOException e) {
             log.error("envaya client parsePayload error:", e);
             throw new EnvayaClientException(
@@ -64,15 +65,16 @@ public class EnvayaClient {
                     EnvayaClientException.Reason.ERROR_GETTING_RESOURCE, e);
         }
 
-        log.debug("Response Status code:"+response.code());
-        if (isSucceed(response) && !request.method().equals("DELETE")) {
-          return parsePayload(response, entityClass);
-        } else if (isSucceed(response)) {
-           return null;
-        } else {
-            throw new EnvayaClientException(
-                    EnvayaClientException.Reason.AUTHENTICATION_FAILED);
+        if (isSucceed(response)) {
+            if (request.method().equals("DELETE")) {
+                return null; // assume no any entity
+            }
+            return parsePayload(response, entityClass);
         }
+        // TODO: what about other status codes?!
+        log.warn("Response Status code: {}", response.code());
+        throw new EnvayaClientException(
+                    EnvayaClientException.Reason.AUTHENTICATION_FAILED);
     }
     
     protected <K> K getPayload(EnvayaRequest request, Class<K> entityClass)
@@ -131,7 +133,36 @@ public class EnvayaClient {
             .setMessage(message)
             .setTimestamp(timestamp), EnvayaResponse.class);
     }
-    
+
+    public EnvayaResponse parsed(String from, String message, String parsed, Long timestamp) throws EnvayaClientException {
+        return getPayload(new EnvayaRequest()
+                .setVersion(200)
+                .setAction(Action.INCOMING)
+                .setFrom(from)
+                .setParsedCommandDataSet(parsed)
+                .setMessageType(MessageType.SMS_PARSED)
+                .setMessage(message)
+                .setTimestamp(timestamp), EnvayaResponse.class);
+    }
+
+    public EnvayaResponse createResponse(String from, String newAccountResponse, Long timestamp) throws EnvayaClientException {
+        return getPayload(new EnvayaRequest()
+            .setVersion(200)
+            .setAction(Action.CREATE_RESPONSE)
+            .setFrom(from)
+            .setNewAccountResponse(newAccountResponse)
+            .setTimestamp(timestamp), EnvayaResponse.class);
+    }
+
+    public EnvayaResponse signResponse(String from, String signResponse, Long timestamp) throws EnvayaClientException {
+        return getPayload(new EnvayaRequest()
+            .setVersion(200)
+            .setAction(Action.SIGN_RESPONSE)
+            .setFrom(from)
+            .setSignResponse(signResponse)
+            .setTimestamp(timestamp), EnvayaResponse.class);
+    }
+
     public EnvayaResponse outgoing() throws EnvayaClientException {
         return getPayload(new EnvayaRequest()
             .setAction(Action.OUTGOING), EnvayaResponse.class);
